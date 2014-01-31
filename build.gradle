@@ -1,0 +1,51 @@
+apply plugin: 'android'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+def version = "1.0.0-SNAPSHOT"
+def groupId = "com.gorbatenko"
+def artifactId = project.name
+
+buildscript {
+    repositories {
+	mavenCentral()
+    }
+
+    dependencies {
+	classpath 'com.android.tools.build:gradle:0.7.0'
+    }
+}
+
+android {
+    buildToolsVersion "18.0.1"
+    compileSdkVersion 18
+}	
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.roboguice:roboguice:2.0'
+}
+
+def apkFile = file("build/apk/$project.name-debug-unaligned.apk")
+
+artifacts {
+    archives apkFile 
+}
+
+/*
+ * Repo to deploy artifact to.
+ */
+uploadArchives {
+    repositories.mavenDeployer {
+	    repository(url: "http://repo.com/repo") {
+		authentication(userName: "user", password: "password")
+	    }
+	    pom.version = version 
+            pom.groupId = groupId
+            pom.artifactId = artifactId
+    }
+}
